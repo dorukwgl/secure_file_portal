@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import auth from "../api/auth/authController";
 import users from "../api/users/usersController";
 import {authorize} from "../middlewares/auth";
+import files from "../api/files/filesController";
 
 
 const api = (p: string) => `/api/${p}`;
@@ -12,6 +13,7 @@ const initializeRoutes = (app: Express): void => {
 
     app.use(api("users"), users);
     app.use(api("auth"), auth);
+    app.use(api("files"), files);
 }
 
 export default initializeRoutes;
