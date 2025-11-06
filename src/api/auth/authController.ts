@@ -33,7 +33,7 @@ auth.post("/login", async (req: express.Request<{}, any, Credentials>, res) => {
         httpOnly: true,
         sameSite: isProd,
         secure: isProd,
-        maxAge: 60 * 60 * 24 * 6 * 1000, // 6 days
+        maxAge: 5 * 60 * 1000, // 5 mins
     });
 
     res.status(200).json(user);

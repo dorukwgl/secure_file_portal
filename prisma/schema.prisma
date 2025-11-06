@@ -13,6 +13,20 @@ enum EStatus {
     Disabled
 }
 
+enum AccessType {
+    Public
+    Private
+    Closed
+}
+
+enum FileCategory {
+    CategoryA
+    CategoryB
+    CategoryC
+    CategoryD
+    CategoryE
+}
+
 enum EUserRoles {
     Admin
     User
@@ -30,6 +44,35 @@ model Users {
     role EUserRoles @default(User)
     sessions Sessions[]
     todos Samples[]
+    fileShares FileShare[]
+    fileShareAccess FileShareAccess[]
+}
+
+model FileShare {
+    fileShareId String @id @default(cuid())
+    fileName String
+    filePath String
+    accessType AccessType @default(Private)
+    sharedBy String
+    user Users @relation(fields: [sharedBy], references: [userId])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    deletedAt DateTime?
+    fileShares FileShareAccess[]
+    category FileCategory @default(CategoryA)
+}
+
+model FileShareAccess {
+    fileShareAccessId String @id @default(cuid())
+    fileShareId String
+    userId String
+    fileShare FileShare @relation(fields: [fileShareId], references: [fileShareId])
+    lastViewedAt DateTime?
+    views Int @default(0)
+    user Users @relation(fields: [userId], references: [userId])
+    sharedAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    deletedAt DateTime?
 }
 
 model Samples {
