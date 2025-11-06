@@ -1,6 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import SessionRequest from "../entities/SessionRequest";
 import prismaClient from "../utils/prismaClient";
+import { EUserRoles } from "@prisma/client";
 
 
 const getSession = async(req: Request) => {
@@ -23,10 +24,29 @@ const getSession = async(req: Request) => {
 
 const authorize = async (req: SessionRequest, res: Response, next: NextFunction) => {
    const session = await getSession(req);
-    if (!session) return res.status(401).json({error: "please login first"});
+    if (!session) {
+        res.status(401).json({error: "please login first"});
+        return;
+    }
 
     req.session = session;
     next();
 }
 
-export default authorize;
+const authAdmin = async (req: SessionRequest, res: Response, next: NextFunction) => {
+    const session = await getSession(req);
+    if (!session) {
+        res.status(401).json({error: "please login first"});
+        return;
+    }
+
+    if (session.role !== EUserRoles.Admin) {
+        res.status(401).json({error: "you are not authorized"});
+        return;
+    }
+
+    req.session = session;
+    next();
+}
+
+export {authorize, authAdmin};

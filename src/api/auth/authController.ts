@@ -2,7 +2,7 @@ import express from "express";
 import {authenticate, createSession} from "./authModel";
 import {Users} from "@prisma/client";
 import SessionRequest from "../../entities/SessionRequest";
-import authorize from "../../middlewares/auth";
+import {authorize} from "../../middlewares/auth";
 import prismaClient from "../../utils/prismaClient";
 
 
@@ -15,10 +15,16 @@ interface Credentials {
 
 auth.post("/login", async (req: express.Request<{}, any, Credentials>, res) => {
     const {username, password} = req.body;
-    if (!username || !password) return res.status(401).json({error: "username and password required"});
+    if (!username || !password) {
+        res.status(401).json({error: "username and password required"});
+        return;
+    }
 
     const user = await authenticate(username, password);
-    if (!user) return res.status(401).json({error: "Incorrect username or password"});
+    if (!user) {
+        res.status(401).json({error: "Incorrect username or password"});
+        return;
+    }
 
     const isProd = process.env.NODE_ENV === "production";
 
@@ -41,7 +47,6 @@ auth.delete("/logout", authorize, async (req: SessionRequest, res) => {
     });
 
     res.status(200).end();
-})
-
+});
 
 export default auth;

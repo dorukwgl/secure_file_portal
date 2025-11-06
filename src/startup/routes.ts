@@ -2,7 +2,7 @@ import {Express} from "express";
 import cookieParser from "cookie-parser";
 import auth from "../api/auth/authController";
 import users from "../api/users/usersController";
-import authorize from "../middlewares/auth";
+import {authorize} from "../middlewares/auth";
 import samples from "../api/sample/samplesController";
 
 
