@@ -241,11 +241,14 @@ const accessFile = async (fileShareId: string, userId: string) => {
     const fileName = await prismaClient.fileShare.findUnique({
         where: {
             fileShareId,
-            fileShares: {
-                some: {
-                    userId,
-                },
-            },
+            OR: [
+                {fileShares: {
+                    some: {
+                        userId,
+                    },
+                }},
+                {accessType: "Public"}
+            ]
         },
         select: {
             fileName: true,
