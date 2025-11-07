@@ -30,7 +30,7 @@ files.put("/update-access/:fileShareId", authAdmin, async (req: SessionRequest<{
     res.status(statusCode).json(error || data);
 });
 
-files.delete("/", authAdmin, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {
+files.delete("/:fileShareId", authAdmin, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {
     const {data, error, statusCode} = await deleteFile(req.params.fileShareId);
     res.status(statusCode).json(error || data);
 });
