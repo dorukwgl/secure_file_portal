@@ -6,8 +6,8 @@ import PaginationParams from "./PaginationParams";
 const FileParams = PaginationParams.omit({
     status: true,
 }).extend({
-    category: z.nativeEnum(FileCategory),
-    accessType: z.nativeEnum(AccessType),
+    category: z.nativeEnum(FileCategory).optional(),
+    accessType: z.nativeEnum(AccessType).optional(),
 });
 
 export type FileParamsType = z.infer<typeof FileParams>;
