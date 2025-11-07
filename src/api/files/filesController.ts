@@ -54,11 +54,6 @@ files.get("/shared-file/:fileShareId", authorize, async (req: SessionRequest<{fi
         return;
     }
 
-    // check if file is pdf
-    if (!fileName.toLocaleLowerCase().endsWith(".pdf")) {
-        res.download(path.join(FILES_UPLOAD_PATH, fileName));
-        return;
-    }
     res.setHeader("Content-Type", "application/pdf");
     fs.createReadStream(path.join(FILES_UPLOAD_PATH, fileName))
         .pipe(res);
@@ -68,12 +63,6 @@ files.get("/file/:fileShareId", authAdmin, async (req: SessionRequest<{fileShare
     const fileName = await accessFileAdmin(req.params.fileShareId);
     if (!fileName) {
         res.json({error: "File not found"});
-        return;
-    }
-
-    // check if file is pdf
-    if (!fileName.toLocaleLowerCase().endsWith(".pdf")) {
-        res.download(path.join(FILES_UPLOAD_PATH, fileName));
         return;
     }
     

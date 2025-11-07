@@ -251,7 +251,7 @@ const accessFile = async (fileShareId: string, userId: string) => {
             ]
         },
         select: {
-            fileName: true,
+            filePath: true,
         },
     });
 
@@ -271,20 +271,20 @@ const accessFile = async (fileShareId: string, userId: string) => {
         },
     });
 
-    return fileName.fileName;
+    return fileName.filePath;
 }
 
 const accessFileAdmin = async (fileShareId: string): Promise<string | undefined> => {
-    const fileName = await prismaClient.fileShare.findUnique({
+    const filePath = await prismaClient.fileShare.findUnique({
         where: {
             fileShareId,
         },
         select: {
-            fileName: true,
+            filePath: true,
         },
     });
 
-    return fileName?.fileName;
+    return filePath?.filePath;
 }
 
 const revokeAccess = async (fileShareId: string, userId: string) => {
