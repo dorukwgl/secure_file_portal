@@ -82,8 +82,8 @@ files.get("/file/:fileShareId", authAdmin, async (req: SessionRequest<{fileShare
         .pipe(res);
 });
 
-files.post("/grant-access/:fileShareId", authAdmin, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {
-    const {data, error, statusCode} = await grantAccess(req.params.fileShareId, req.body);
+files.post("/grant-access/:fileShareId/:userId", authAdmin, async (req: SessionRequest<{fileShareId: string, userId: string}>, res: Response) => {
+    const {data, error, statusCode} = await grantAccess(req.params.fileShareId, req.params.userId);
     res.status(statusCode).json(error || data);
 });
 

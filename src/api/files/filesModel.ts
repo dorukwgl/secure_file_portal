@@ -354,22 +354,8 @@ const revokeAccess = async (fileShareId: string, userId: string) => {
     return res;
 }
 
-const grantAccess = async (fileShareId: string, body: any) => {
+const grantAccess = async (fileShareId: string, userId: string) => {
     const res = { statusCode: 400 } as ModelReturnTypes;
-
-    const validation = z.object({
-        userIds: z.array(z.string()).min(1),
-    }).safeParse(body);
-    const error = formatValidationErrors(validation);
-    if (error) {
-        res.error = error.error;
-        return res;
-    };
-
-    if (!validation.data) {
-        res.error = {error: "Invalid data, please send at least one user id"};
-        return res;
-    }
 
     const file = await prismaClient.fileShare.findUnique({
         where: {
@@ -381,23 +367,21 @@ const grantAccess = async (fileShareId: string, body: any) => {
         return res;
     }
 
-    const users = await prismaClient.users.findMany({
+    const user = await prismaClient.users.findUnique({
         where: {
-            userId: {
-                in: validation.data.userIds,
-            },
+            userId
         },
     });
-    if (!(users.length === validation.data.userIds.length)) {
-        res.error = {error: "All users not found"};
+    if (!user) {
+        res.error = {error: "User not found"};
         return res;
     }
 
-    await prismaClient.fileShareAccess.createMany({
-        data: users.map((user) => ({
+    await prismaClient.fileShareAccess.create({
+        data: {
             fileShareId,
-            userId: user.userId,
-        })),
+            userId,
+        },
     });
 
     res.statusCode = 200;
