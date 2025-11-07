@@ -9,12 +9,21 @@ import prod from "./startup/production";
 
 const app = express();
 
-if (process.env.NODE_ENV === "development") {
-    app.use(cors({
-        credentials: true,
-        origin: ["http://localhost:5173", "*"],
-    }));
-}
+const corsConfig = cors({
+    credentials: true,
+    origin: (origin, callback) => {
+        const allowedOrigins = ["http://10.42.0.1:3000", "http://localhost:5173", "http://localhost:3000", "http://localhost:8080"];
+        // just for testing
+        // callback(null, true);
+        // return;
+        if (!origin || allowedOrigins.includes(origin))
+            callback(null, true);
+        else
+            callback(new Error("Whoa Whoa Whoa, Not allowed by cors"));
+    },
+});
+
+app.use(corsConfig);
 
 // increase the payload size
 app.use(express.json({limit: "2048mb"}));
