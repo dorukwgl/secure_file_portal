@@ -97,14 +97,14 @@ const searchSharedFiles = (userId: string, params: FileParamsType) => {
                                 fileName: data.seed ? { contains: data.seed } : undefined,
                             },
                         ],
-                        OR: [ {
-                        accessType: AccessType.Public,
-                        fileShares: {
-                            some: {
-                                userId,
-                            },
-                        },
-                    }]
+                        OR: [ 
+                            {accessType: AccessType.Public},
+                            { fileShares: {
+                                some: {
+                                    userId,
+                                },
+                            }},
+                        ]
                 },
                 ]
             },
