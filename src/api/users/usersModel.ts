@@ -27,7 +27,7 @@ const registerUser = async (body: UserType) => {
     });
     if (user) {
         res.error = {error: "User alrady exists"};
-        return;
+        return res;
     }
 
     res.data = await prismaClient.users.create({
