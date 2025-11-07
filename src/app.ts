@@ -12,10 +12,13 @@ const app = express();
 const corsConfig = cors({
     credentials: true,
     origin: (origin, callback) => {
-        const allowedOrigins = ["http://10.42.0.1:3000", "http://localhost:5173", "http://localhost:3000", "http://localhost:8080"];
+        const allowedOrigins = ["http://10.42.0.1:3000", "http://localhost:5173", "https://localhost:5173", "http://localhost:3000", "http://localhost:8080"];
         // just for testing
-        // callback(null, true);
-        // return;
+        if (process.env.NODE_ENV === "development") {
+            console.log("bypassed cors for dev: ", origin);
+            callback(null, true);
+            return;
+        }
         if (!origin || allowedOrigins.includes(origin))
             callback(null, true);
         else

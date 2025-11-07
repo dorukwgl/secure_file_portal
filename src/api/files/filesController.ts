@@ -10,8 +10,8 @@ import fs from "fs";
 
 const files = express.Router();
 
-files.post("/", [authAdmin, FileStorage().array("sharedFiles")], async (req: SessionRequest, res: Response) => {
-    if (!req.files?.length) {
+files.post("/", [authAdmin, FileStorage().array("sharedFiles", 25)], async (req: SessionRequest, res: Response) => {
+    if (Array.isArray(req.files) && !req.files?.length) {
         res.json({error: "No Files Uploaded"});
         return;
     }

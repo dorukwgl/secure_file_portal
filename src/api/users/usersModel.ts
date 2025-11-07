@@ -156,6 +156,7 @@ const changePassword = async (userId: string, password: string) => {
         },
     });
 
+    res.statusCode = 200;
     return res;
 };
 

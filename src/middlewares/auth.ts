@@ -5,6 +5,9 @@ import { EUserRoles } from "@prisma/client";
 
 
 const getSession = async(req: Request) => {
+    // extract authorization token
+    // const sessionId = req.headers.authorization?.split(" ")[1];
+
     const sessionCookie: string = req.cookies.sessionId;
     if (!sessionCookie) return null;
 
