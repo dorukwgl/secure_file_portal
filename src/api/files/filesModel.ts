@@ -318,6 +318,93 @@ const accessFileAdmin = async (fileShareId: string): Promise<string | undefined>
     return fileName?.fileName;
 }
 
+const revokeAccess = async (fileShareId: string, userId: string) => {
+    const res = { statusCode: 400 } as ModelReturnTypes;
+
+    const file = await prismaClient.fileShare.findUnique({
+        where: {
+            fileShareId,
+        },
+    });
+
+    if (!file) {
+        res.error = {error: "File not found"};
+        return res;
+    }
+
+    const user = await prismaClient.users.findUnique({
+        where: {
+            userId
+        }
+    });
+    if (!user) {
+        res.error = {error: "User not found"}
+        return res;
+    }
+
+    await prismaClient.fileShareAccess.deleteMany({
+        where: {
+            fileShareId,
+            userId,
+        },
+    });
+
+    res.statusCode = 200;
+    res.data = {message: "Access revoked successfully"};
+    return res;
+}
+
+const grantAccess = async (fileShareId: string, body: any) => {
+    const res = { statusCode: 400 } as ModelReturnTypes;
+
+    const validation = z.object({
+        userIds: z.array(z.string()).min(1),
+    }).safeParse(body);
+    const error = formatValidationErrors(validation);
+    if (error) {
+        res.error = error.error;
+        return res;
+    };
+
+    if (!validation.data) {
+        res.error = {error: "Invalid data, please send at least one user id"};
+        return res;
+    }
+
+    const file = await prismaClient.fileShare.findUnique({
+        where: {
+            fileShareId,
+        },
+    });
+    if (!file) {
+        res.error = {error: "File not found"};
+        return res;
+    }
+
+    const users = await prismaClient.users.findMany({
+        where: {
+            userId: {
+                in: validation.data.userIds,
+            },
+        },
+    });
+    if (!(users.length === validation.data.userIds.length)) {
+        res.error = {error: "All users not found"};
+        return res;
+    }
+
+    await prismaClient.fileShareAccess.createMany({
+        data: users.map((user) => ({
+            fileShareId,
+            userId: user.userId,
+        })),
+    });
+
+    res.statusCode = 200;
+    res.data = {message: "Access granted successfully"};
+    return res;
+};
+
 export {
     shareFiles,
     changeDisplayName,
@@ -327,5 +414,7 @@ export {
     searchSharedFiles,
     getViewrs,
     accessFile,
-    accessFileAdmin
+    accessFileAdmin,
+    revokeAccess,
+    grantAccess
 }

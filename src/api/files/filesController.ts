@@ -2,7 +2,7 @@ import express, { Response } from "express";
 import { authAdmin, authorize } from "../../middlewares/auth";
 import SessionRequest from "../../entities/SessionRequest";
 import FileStorage from "../../utils/FileStorage";
-import { accessFile, accessFileAdmin, changeAccessType, changeDisplayName, deleteFile, getViewrs, searchAllFiles, searchSharedFiles, shareFiles } from "./filesModel";
+import { accessFile, accessFileAdmin, changeAccessType, changeDisplayName, deleteFile, getViewrs, grantAccess, revokeAccess, searchAllFiles, searchSharedFiles, shareFiles } from "./filesModel";
 import { EUserRoles } from "@prisma/client";
 import path from "path";
 import { FILES_UPLOAD_PATH } from "../../entities/constants";
@@ -80,6 +80,16 @@ files.get("/file/:fileShareId", authAdmin, async (req: SessionRequest<{fileShare
     res.setHeader("Content-Type", "application/pdf");
     fs.createReadStream(path.join(FILES_UPLOAD_PATH, fileName))
         .pipe(res);
+});
+
+files.post("/grant-access/:fileShareId", authAdmin, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {
+    const {data, error, statusCode} = await grantAccess(req.params.fileShareId, req.body);
+    res.status(statusCode).json(error || data);
+});
+
+files.delete("/revoke-access/:fileShareId/:userId", authAdmin, async (req: SessionRequest<{fileShareId: string, userId: string}>, res: Response) => {
+    const {data, error, statusCode} = await revokeAccess(req.params.fileShareId, req.params.userId);
+    res.status(statusCode).json(error || data);
 });
 
 export default files;
