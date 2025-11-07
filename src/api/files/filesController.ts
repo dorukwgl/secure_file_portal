@@ -16,7 +16,7 @@ files.post("/", [authAdmin, FileStorage().array("sharedFiles", 25)], async (req:
         return;
     }
 
-    const {data, error, statusCode} = await shareFiles(req.session!.userId, (req.files as any)["sharedFiles"], req.body);
+    const {data, error, statusCode} = await shareFiles(req.session!.userId, (req.files as any), req.body);
     res.status(statusCode).json(error || data);
 });
 
