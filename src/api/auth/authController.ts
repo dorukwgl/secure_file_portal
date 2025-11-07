@@ -31,7 +31,7 @@ auth.post("/login", async (req: express.Request<{}, any, Credentials>, res) => {
     const session = await createSession(user as Users);
     res.cookie("sessionId", session, {
         httpOnly: true,
-        sameSite: isProd,
+        sameSite: isProd ? "strict" : "lax",
         secure: isProd,
         maxAge: 5 * 60 * 1000, // 5 mins
     });
