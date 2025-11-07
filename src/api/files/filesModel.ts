@@ -30,7 +30,8 @@ const shareFiles = async (userId: string, files: Express.Multer.File[], body: an
             category: data.category,
             fileName: data.displayName || randomUUID(),
             filePath: file.filename,
-            sharedBy: userId
+            sharedBy: userId,
+            accessType: AccessType.Public,
         } as FileShare)
     }
 
