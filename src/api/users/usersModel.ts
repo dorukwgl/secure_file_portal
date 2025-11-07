@@ -77,6 +77,7 @@ const disableUser = async (userId: string) => {
         },
     });
 
+    res.statusCode = 200;
     return res;
 };
 
@@ -98,6 +99,7 @@ const enableUser = async (userId: string) => {
         },
     });
 
+    res.statusCode = 200;
     return res;
 };
 
