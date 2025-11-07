@@ -20,8 +20,8 @@ files.post("/", [authAdmin, FileStorage().array("sharedFiles", 25)], async (req:
     res.status(statusCode).json(error || data);
 });
 
-files.put("/display-name", authAdmin, async (req: SessionRequest, res: Response) => {
-    const {data, error, statusCode} = await changeDisplayName(req.session!.userId, req.body);
+files.put("/display-name/:fileShareId", authAdmin, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {
+    const {data, error, statusCode} = await changeDisplayName(req.params.fileShareId, req.body);
     res.status(statusCode).json(error || data);
 });
 
