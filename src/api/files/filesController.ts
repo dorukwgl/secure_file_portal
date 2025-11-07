@@ -2,7 +2,7 @@ import express, { Response } from "express";
 import { authAdmin, authorize } from "../../middlewares/auth";
 import SessionRequest from "../../entities/SessionRequest";
 import FileStorage from "../../utils/FileStorage";
-import { accessFile, accessFileAdmin, changeAccessType, changeDisplayName, deleteFile, getViewrs, grantAccess, revokeAccess, searchAllFiles, searchSharedFiles, shareFiles } from "./filesModel";
+import { accessFile, accessFileAdmin, changeAccessType, deleteFile, editSharedFile, getViewrs, grantAccess, revokeAccess, searchAllFiles, searchSharedFiles, shareFiles } from "./filesModel";
 import { EUserRoles } from "@prisma/client";
 import path from "path";
 import { FILES_UPLOAD_PATH } from "../../entities/constants";
@@ -20,13 +20,13 @@ files.post("/", [authAdmin, FileStorage().array("sharedFiles", 25)], async (req:
     res.status(statusCode).json(error || data);
 });
 
-files.put("/display-name/:fileShareId", authAdmin, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {
-    const {data, error, statusCode} = await changeDisplayName(req.params.fileShareId, req.body);
+files.put("/update-access/:fileShareId", authAdmin, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {
+    const {data, error, statusCode} = await changeAccessType(req.params.fileShareId, req.body);
     res.status(statusCode).json(error || data);
 });
 
-files.put("/update-access/:fileShareId", authAdmin, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {
-    const {data, error, statusCode} = await changeAccessType(req.params.fileShareId, req.body);
+files.put("/edit/:fileShareId", authAdmin, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {
+    const {data, error, statusCode} = await editSharedFile(req.params.fileShareId, req.body);
     res.status(statusCode).json(error || data);
 });
 

@@ -270,41 +270,6 @@ const accessFile = async (fileShareId: string, userId: string) => {
     return fileName.fileName;
 }
 
-const changeDisplayName = async (fileShareId: string, body: any) => {
-    const res = { statusCode: 400 } as ModelReturnTypes;
-
-    const validation = z.object({displayName: z.string().min(3)}).safeParse(body);
-    const error = formatValidationErrors(validation);
-    if (error) {
-        res.error = error.error;
-        return res;
-    };
-
-    const file = await prismaClient.fileShare.findUnique({
-        where: {
-            fileShareId,
-        },
-    });
-
-    if (!file) {
-        res.error = {error: "File not found"};
-        return res;
-    }
-
-    await prismaClient.fileShare.update({
-        where: {
-            fileShareId,
-        },
-        data: {
-            fileName: validation.data?.displayName,
-        },
-    });
-
-    res.statusCode = 200;
-    res.data = {message: "File name changed successfully"};
-    return res;
-}
-
 const accessFileAdmin = async (fileShareId: string): Promise<string | undefined> => {
     const fileName = await prismaClient.fileShare.findUnique({
         where: {
@@ -389,9 +354,44 @@ const grantAccess = async (fileShareId: string, userId: string) => {
     return res;
 };
 
+const editSharedFile = async (fileShareId: string, body: any) => {
+    const res = { statusCode: 400 } as ModelReturnTypes;
+
+    const fileShare = await prismaClient.fileShare.findUnique({
+        where: {
+            fileShareId,
+        },
+    });
+    if (!fileShare) {
+        res.error = {error: "File not found"};
+        return res;
+    }
+
+    const validation = FilesUpload.safeParse(body);
+    const error = formatValidationErrors(validation);
+    if (error) {
+        res.error = error.error;
+        return res;
+    };
+
+    const data = validation.data!;
+    await prismaClient.fileShare.update({
+        where: {
+            fileShareId,
+        },
+        data: {
+            category: data.category,
+            fileName: data.displayName,
+        },
+    });
+
+    res.statusCode = 200;
+    res.data = {message: "File updated successfully"};
+    return res;
+}
+
 export {
     shareFiles,
-    changeDisplayName,
     changeAccessType,
     deleteFile,
     searchAllFiles,
@@ -400,5 +400,6 @@ export {
     accessFile,
     accessFileAdmin,
     revokeAccess,
-    grantAccess
+    grantAccess,
+    editSharedFile
 }
