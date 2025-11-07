@@ -148,6 +148,8 @@ const changeAccessType = async (fileShareId: string, body: any) => {
         },
     });
 
+    res.statusCode = 200;
+    res.data = {message: "Access type changed successfully"};
     return res;
 }
 
