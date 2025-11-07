@@ -36,10 +36,10 @@ files.delete("/", authAdmin, async (req: SessionRequest<{fileShareId: string}>, 
 });
 
 files.get("/", authorize, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {
-    const {data, error, statusCode} = req.session!.role === EUserRoles.Admin ? 
+    const {data, error, statusCode, info} = req.session!.role === EUserRoles.Admin ? 
         await searchAllFiles(req.query as any) : 
         await searchSharedFiles(req.session!.userId, req.query as any);
-    res.status(statusCode).json(error || data);
+    res.status(statusCode).json(error || {data, info});
 });
 
 files.get("/viewers/:fileShareId", authAdmin, async (req: SessionRequest<{fileShareId: string}>, res: Response) => {

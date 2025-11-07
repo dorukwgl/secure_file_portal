@@ -16,7 +16,7 @@ async function main() {
                 username: "sysadmin",
                 password: await hashPassword("~~654~~321~~"),
                 status: EStatus.Active,
-                role: EUserRoles.User,
+                role: EUserRoles.Admin,
             }
         ]
     });

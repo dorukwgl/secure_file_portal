@@ -13,8 +13,8 @@ users.post("/register", authAdmin, async (req, res) => {
 });
 
 users.get("/", authAdmin, async (req, res) => {
-    const {error, statusCode, data} = await searchUsers(req.query);
-    res.status(statusCode).json(error || data);
+    const {error, statusCode, data, info} = await searchUsers(req.query);
+    res.status(statusCode).json(error || {data, info});
 });
 
 users.get("/me", authorize, async (req: SessionRequest, res) => {

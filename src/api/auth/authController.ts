@@ -26,13 +26,11 @@ auth.post("/login", async (req: express.Request<{}, any, Credentials>, res) => {
         return;
     }
 
-    const isProd = process.env.NODE_ENV === "production";
-
     const session = await createSession(user as Users);
     res.cookie("sessionId", session, {
         httpOnly: true,
-        sameSite: isProd ? "strict" : "lax",
-        secure: isProd,
+        sameSite: "lax",
+        secure: true,
         maxAge: 5 * 60 * 1000, // 5 mins
     });
 
