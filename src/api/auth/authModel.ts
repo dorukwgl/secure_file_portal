@@ -1,4 +1,4 @@
-import { Sessions } from "@prisma/client";
+import { EStatus, Sessions } from "@prisma/client";
 import { comparePassword } from "../../utils/hash";
 import { v7 as uuidV7 } from "uuid";
 import type { Users } from "@prisma/client";
@@ -22,7 +22,7 @@ const getUser = async (username: string) => {
 const authenticate = async (username: string, password: string): Promise<CustomUser | null> => {
     const user = await getUser(username);
 
-    if (!user) return null;
+    if (!user || user.status != EStatus.Active) return null;
 
     if (!await comparePassword(password, (user.password || ''))) return null;
     delete user.password;
